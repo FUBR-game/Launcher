@@ -24,9 +24,9 @@ namespace Launcher
         // container, etc.
         private static void AppMain(Application app, string[] args)
         {
-            var window = new MainWindow
+            var window = new Login
             {
-                DataContext = new MainWindowViewModel(),
+                DataContext = new LoginViewModel(),
             };
 
             app.Run(window);

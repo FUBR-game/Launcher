@@ -1,0 +1,28 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Launcher.ViewModels;assembly=Launcher"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" Width="330" Height="310"
+        x:Class="Launcher.Views.Login"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Login"
+        Tag="LOGIN_WINDOW">
+
+    <Design.DataContext>
+        <vm:LoginViewModel />
+    </Design.DataContext>
+
+    <Grid RenderTransformOrigin="0,0">
+        <StackPanel Orientation="Vertical" Margin="0,16,0,0" HorizontalAlignment="Center" Spacing="38">
+            <TextBlock HorizontalAlignment="Center" Text="FUBR" TextWrapping="Wrap" VerticalAlignment="Top"
+                       FontSize="40" FontWeight="Bold" />
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Spacing="12">
+                <Button Content="Login" Command="{Binding OnClickLogin}" HorizontalAlignment="Center"
+                        VerticalAlignment="Top" />
+                <Button Content="Register" Command="{Binding OnClickRegister}" HorizontalAlignment="Center"
+                        VerticalAlignment="Top" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
