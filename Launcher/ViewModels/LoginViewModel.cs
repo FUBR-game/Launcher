@@ -9,11 +9,11 @@ namespace Launcher.ViewModels
         public static async void OnClickLogin()
         {
             await Login();
-            var mainWindow = new MainWindow()
+            var mainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(),
+                DataContext = new MainWindowViewModel()
             };
-            
+
             mainWindow.Show();
 
             foreach (var window in Application.Current.Windows)

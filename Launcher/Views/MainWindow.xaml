@@ -9,20 +9,19 @@
         Title="Launcher">
 
     <Design.DataContext>
-        <vm:MainWindowViewModel/>
+        <vm:MainWindowViewModel />
     </Design.DataContext>
 
     <Grid>
         <TabControl>
             <TabItem Header="Home">
-                <Grid Background="#FFFFFF">
-                </Grid>
+                <Grid Background="#FFFFFF" />
             </TabItem>
             <TabItem Header="Profile">
-                <Grid Background="#FFFFFF"/>
+                <Grid Background="#FFFFFF" />
             </TabItem>
             <TabItem Header="Setting">
-                <Grid Background="#FFFFFF"/>
+                <Grid Background="#FFFFFF" />
             </TabItem>
         </TabControl>
     </Grid>

@@ -1,18 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using Launcher.Models;
 using System.IO;
-using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Runtime.Serialization.Json;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using DeviceId;
+using Launcher.Models;
 using Newtonsoft.Json;
-using Serilog.Formatting.Json;
 using static System.Text.Encoding;
 
 namespace Launcher.Lib
@@ -25,40 +21,36 @@ namespace Launcher.Lib
 
     internal class TokensClass
     {
-        public string token_type;
-        public string expires_in;
         public string access_token;
+        public string expires_in;
         public string refresh_token;
+        public string token_type;
     }
 
     public static class Authentication
     {
-        private static byte[] _iv = ASCII.GetBytes(new DeviceIdBuilder().AddMotherboardSerialNumber().ToString());
-        private static byte[] _key = ASCII.GetBytes(new DeviceIdBuilder().AddProcessorId().AddSystemUUID().ToString());
-        private static string dataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        private static readonly byte[] _iv =
+            ASCII.GetBytes(new DeviceIdBuilder().AddMotherboardSerialNumber().ToString());
+
+        private static readonly byte[] _key =
+            ASCII.GetBytes(new DeviceIdBuilder().AddProcessorId().AddSystemUUID().ToString());
+
+        private static readonly string dataPath =
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
         private static string configPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        private static string _loginSettingsFileLocation = dataPath + "/fubr/login.setings";
+        private static readonly string _loginSettingsFileLocation = dataPath + "/fubr/login.setings";
 
         private static void OpenBrowser(string url)
         {
             Process browser;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
                 browser = Process.Start(new ProcessStartInfo("cmd",
                     $"/c start {url.Replace("&", "^&")}")); // Works ok on windows and escape need for cmd.exe
-            }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
                 browser = Process.Start("xdg-open", url); // Works ok on linux
-            }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
                 browser = Process.Start("open", url); // Not tested
-            }
-            else
-            {
-                //TODO catch all errors
-            }
         }
 
         public static async Task<User> Login()
@@ -81,12 +73,12 @@ namespace Launcher.Lib
                 OpenBrowser(@"https://lumen.arankieskamp.com");
             }
 
-            
+
             // store access token in APIAccessor singelton
             var tokens = await GetTokens(loginSettings);
             var accessor = ApiAccessor.GetApiAccessor;
             accessor.AccessToken = tokens.access_token;
-            
+
             // update refresh token with new token and store safely back in encrypted file
             loginSettings.RefreshToken = tokens.refresh_token;
             var loginSettingsJson = JsonConvert.SerializeObject(loginSettings);
@@ -103,16 +95,16 @@ namespace Launcher.Lib
                 var url = @"https://lumen.arankieskamp.com";
                 httpClient.BaseAddress = new Uri(url);
                 httpClient.DefaultRequestHeaders.Accept.Clear();
-                
+
                 var content = new FormUrlEncodedContent(new[]
                 {
-                    new KeyValuePair<string, string>("client_id","4"), 
-                    new KeyValuePair<string, string>("client_secret","9k5rZHjCAbN6QIXHYW9zaodQ2sqtxGItZAqpp2YO"),
-                    new KeyValuePair<string, string>("refresh_token",refreshToken), 
-                    new KeyValuePair<string, string>("grant_type","refresh_token"), 
-                    new KeyValuePair<string, string>("scope","*"), 
+                    new KeyValuePair<string, string>("client_id", "4"),
+                    new KeyValuePair<string, string>("client_secret", "9k5rZHjCAbN6QIXHYW9zaodQ2sqtxGItZAqpp2YO"),
+                    new KeyValuePair<string, string>("refresh_token", refreshToken),
+                    new KeyValuePair<string, string>("grant_type", "refresh_token"),
+                    new KeyValuePair<string, string>("scope", "*")
                 });
-                var result = await httpClient.PostAsync("/oauth/token",content);
+                var result = await httpClient.PostAsync("/oauth/token", content);
                 var resultJson = await result.Content.ReadAsStringAsync();
                 tokens = JsonConvert.DeserializeObject<TokensClass>(resultJson);
             }
@@ -130,14 +122,14 @@ namespace Launcher.Lib
                 httpClient.DefaultRequestHeaders.Accept.Clear();
                 var content = new FormUrlEncodedContent(new[]
                 {
-                    new KeyValuePair<string, string>("client_id","4"), 
-                    new KeyValuePair<string, string>("client_secret","9k5rZHjCAbN6QIXHYW9zaodQ2sqtxGItZAqpp2YO"),
-                    new KeyValuePair<string, string>("username",googleToken), 
-                    new KeyValuePair<string, string>("password","-"), 
-                    new KeyValuePair<string, string>("grant_type","password"), 
-                    new KeyValuePair<string, string>("scope","*"), 
+                    new KeyValuePair<string, string>("client_id", "4"),
+                    new KeyValuePair<string, string>("client_secret", "9k5rZHjCAbN6QIXHYW9zaodQ2sqtxGItZAqpp2YO"),
+                    new KeyValuePair<string, string>("username", googleToken),
+                    new KeyValuePair<string, string>("password", "-"),
+                    new KeyValuePair<string, string>("grant_type", "password"),
+                    new KeyValuePair<string, string>("scope", "*")
                 });
-                var result = await httpClient.PostAsync("/oauth/token",content);
+                var result = await httpClient.PostAsync("/oauth/token", content);
                 var resultJson = await result.Content.ReadAsStringAsync();
                 tokens = JsonConvert.DeserializeObject<TokensClass>(resultJson);
             }
@@ -149,8 +141,7 @@ namespace Launcher.Lib
         {
             if (string.IsNullOrEmpty(loginSettings.RefreshToken))
                 return await GetAccessTokenWithGoogletoken(loginSettings.GoogleToken);
-            else
-                return await GetAccessTokenWithRefreshToken(loginSettings.RefreshToken);
+            return await GetAccessTokenWithRefreshToken(loginSettings.RefreshToken);
         }
 
         private static byte[] StreamToByteArray(Stream input)
@@ -159,10 +150,7 @@ namespace Launcher.Lib
             using (var ms = new MemoryStream())
             {
                 int read;
-                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
-                {
-                    ms.Write(buffer, 0, read);
-                }
+                while ((read = input.Read(buffer, 0, buffer.Length)) > 0) ms.Write(buffer, 0, read);
 
                 return ms.ToArray();
             }
@@ -173,7 +161,7 @@ namespace Launcher.Lib
             return File.Exists(_loginSettingsFileLocation);
         }
 
-        static byte[] EncryptData(string plainText)
+        private static byte[] EncryptData(string plainText)
         {
             // Check arguments.
             if (plainText == null || plainText.Length <= 0)
@@ -182,20 +170,20 @@ namespace Launcher.Lib
 
             // Create an Aes object
             // with the specified key and IV.
-            using (Aes aesAlg = Aes.Create())
+            using (var aesAlg = Aes.Create())
             {
                 aesAlg.Key = _key;
                 aesAlg.IV = _iv;
 
                 // Create an encryptor to perform the stream transform.
-                ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+                var encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
 
                 // Create the streams used for encryption.
-                using (MemoryStream msEncrypt = new MemoryStream())
+                using (var msEncrypt = new MemoryStream())
                 {
-                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
                     {
-                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                        using (var swEncrypt = new StreamWriter(csEncrypt))
                         {
                             //Write all data to the stream.
                             swEncrypt.Write(plainText);
@@ -211,7 +199,7 @@ namespace Launcher.Lib
             return encrypted;
         }
 
-        static string DecryptData(byte[] cipherText)
+        private static string DecryptData(byte[] cipherText)
         {
             // Check arguments.
             if (cipherText == null || cipherText.Length <= 0)
@@ -223,20 +211,20 @@ namespace Launcher.Lib
 
             // Create an Aes object
             // with the specified key and IV.
-            using (Aes aesAlg = Aes.Create())
+            using (var aesAlg = Aes.Create())
             {
                 aesAlg.Key = _key;
                 aesAlg.IV = _iv;
 
                 // Create a decryptor to perform the stream transform.
-                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+                var decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
 
                 // Create the streams used for decryption.
-                using (MemoryStream msDecrypt = new MemoryStream(cipherText))
+                using (var msDecrypt = new MemoryStream(cipherText))
                 {
-                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
                     {
-                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                        using (var srDecrypt = new StreamReader(csDecrypt))
                         {
                             // Read the decrypted bytes from the decrypting stream
                             // and place them in a string.

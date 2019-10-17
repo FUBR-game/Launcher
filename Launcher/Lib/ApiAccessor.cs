@@ -8,22 +8,16 @@ namespace Launcher.Lib
 {
     public class ApiAccessor
     {
-        private string _accessToken;
-
-        public string AccessToken
-        {
-            get => _accessToken;
-            set => _accessToken = value;
-        }
-
         private static ApiAccessor _apiAccessor;
-
-        public static ApiAccessor GetApiAccessor => _apiAccessor ?? (_apiAccessor = new ApiAccessor());
 
         private ApiAccessor()
         {
         }
-        
+
+        public string AccessToken { get; set; }
+
+        public static ApiAccessor GetApiAccessor => _apiAccessor ?? (_apiAccessor = new ApiAccessor());
+
         public static async Task<User> GetCurrentUser()
         {
             User user;
