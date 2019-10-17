@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Launcher.ViewModels
+﻿namespace Launcher.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {

@@ -1,12 +1,11 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
 namespace Launcher.Views
 {
-    public class Login : Window
+    public class MainWindow : Window
     {
-        public Login()
+        public MainWindow()
         {
             InitializeComponent();
         }
