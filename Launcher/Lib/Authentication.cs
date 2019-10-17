@@ -82,7 +82,10 @@ namespace Launcher.Lib
             // update refresh token with new token and store safely back in encrypted file
             loginSettings.RefreshToken = tokens.refresh_token;
             var loginSettingsJson = JsonConvert.SerializeObject(loginSettings);
-
+            var encryptedLoginSettings = EncryptData(loginSettingsJson);
+            var loginSettingsStream = File.Open(_loginSettingsFileLocation, FileMode.OpenOrCreate);
+            if (loginSettingsStream.CanWrite) loginSettingsStream.Write(encryptedLoginSettings);
+            loginSettingsStream.Close();
 
             return await ApiAccessor.GetCurrentUser();
         }
