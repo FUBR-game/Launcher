@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" Width="800" Height="450"
         x:Class="Launcher.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
-        Title="Launcher">
+        Title="FUBR Launcher">
 
     <Design.DataContext>
         <vm:MainWindowViewModel />

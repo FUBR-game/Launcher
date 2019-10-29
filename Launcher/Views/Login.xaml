@@ -6,7 +6,7 @@
         mc:Ignorable="d" Width="330" Height="310"
         x:Class="Launcher.Views.Login"
         Icon="/Assets/avalonia-logo.ico"
-        Title="Login"
+        Title="FUBR Login"
         Tag="LOGIN_WINDOW">
 
     <Design.DataContext>

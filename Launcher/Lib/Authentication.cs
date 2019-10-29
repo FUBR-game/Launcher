@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Pipes;
 using System.Net.Http;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using DeviceId;
@@ -15,7 +15,7 @@ namespace Launcher.Lib
 {
     internal class LoginSettings
     {
-        public string GoogleToken = "104372892978312113975";
+        public string GoogleToken;
         public string RefreshToken;
     }
 
@@ -30,47 +30,54 @@ namespace Launcher.Lib
     public static class Authentication
     {
         private static readonly byte[] _iv =
-            ASCII.GetBytes(new DeviceIdBuilder().AddMotherboardSerialNumber().ToString());
+            ASCII.GetBytes(new DeviceIdBuilder().AddMotherboardSerialNumber().ToString().Substring(0, 16));
 
         private static readonly byte[] _key =
-            ASCII.GetBytes(new DeviceIdBuilder().AddProcessorId().AddSystemUUID().ToString());
+            ASCII.GetBytes(new DeviceIdBuilder().AddProcessorId().AddSystemUUID().ToString().Substring(0, 32));
 
         private static readonly string dataPath =
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
         private static string configPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        private static readonly string _loginSettingsFileLocation = dataPath + "/fubr/login.setings";
+        private static readonly string _loginSettingsFileLocation = dataPath + "/fubr";
+        private static readonly string _loginSettingsFileName = "/login.settings";
 
         private static void OpenBrowser(string url)
         {
             Process browser;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                browser = Process.Start(new ProcessStartInfo("cmd",
-                    $"/c start {url.Replace("&", "^&")}")); // Works ok on windows and escape need for cmd.exe
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+#if Windows
+            browser = Process.Start(new ProcessStartInfo("cmd",
+                $"/c start {url.Replace("&", "^&")}")); // Works ok on windows and escape need for cmd.exe
+#elif Linux
                 browser = Process.Start("xdg-open", url); // Works ok on linux
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+#elif OSX
                 browser = Process.Start("open", url); // Not tested
+#endif
         }
 
         public static async Task<User> Login()
         {
-            LoginSettings loginSettings;
+            var loginSettings = new LoginSettings();
             //check if user has logged in before so the browser doesnt have to open
             if (HasUserLoggedInBefore())
             {
                 // open encryted file that contains the refresh token
-                var encryptedFileStream = File.Open(_loginSettingsFileLocation, FileMode.Open);
+                var encryptedFileStream = File.Open(_loginSettingsFileLocation + _loginSettingsFileName, FileMode.Open);
 
                 var decryptedLoginSettings = DecryptData(StreamToByteArray(encryptedFileStream));
                 encryptedFileStream.Close();
                 loginSettings = JsonConvert.DeserializeObject<LoginSettings>(decryptedLoginSettings);
             }
-            else
+
+            if (loginSettings.GoogleToken == null)
             {
                 // open brower to authenticate
                 loginSettings = new LoginSettings();
                 OpenBrowser(@"https://lumen.arankieskamp.com");
+
+                var base64String = await WaitForLogin();
+                var user = User.UserFromBase64String(base64String);
+                loginSettings.GoogleToken = user.GetGoogleToken();
             }
 
 
@@ -83,11 +90,32 @@ namespace Launcher.Lib
             loginSettings.RefreshToken = tokens.refresh_token;
             var loginSettingsJson = JsonConvert.SerializeObject(loginSettings);
             var encryptedLoginSettings = EncryptData(loginSettingsJson);
-            var loginSettingsStream = File.Open(_loginSettingsFileLocation, FileMode.OpenOrCreate);
-            if (loginSettingsStream.CanWrite) loginSettingsStream.Write(encryptedLoginSettings);
+            Directory.CreateDirectory(_loginSettingsFileLocation);
+            var loginSettingsStream =
+                File.Open(_loginSettingsFileLocation + _loginSettingsFileName, FileMode.OpenOrCreate);
+            if (loginSettingsStream.CanWrite)
+                loginSettingsStream.Write(encryptedLoginSettings, 0, encryptedLoginSettings.Length);
             loginSettingsStream.Close();
 
             return await ApiAccessor.GetCurrentUser();
+        }
+
+        public static async Task<string> WaitForLogin()
+        {
+            var loginInfo = "";
+            await Task.Factory.StartNew(() =>
+            {
+                // Opening Named pipe
+                var server = new NamedPipeServerStream("FubrLogin");
+                // Awaiting connection
+                server.WaitForConnection();
+                // New Connection
+                var reader = new StreamReader(server);
+                // Start reading
+                while (!reader.EndOfStream) loginInfo += reader.ReadLine();
+            });
+
+            return loginInfo;
         }
 
         private static async Task<TokensClass> GetAccessTokenWithRefreshToken(string refreshToken)
@@ -95,7 +123,7 @@ namespace Launcher.Lib
             TokensClass tokens;
             using (var httpClient = new HttpClient())
             {
-                var url = @"https://lumen.arankieskamp.com";
+                const string url = @"https://lumen.arankieskamp.com";
                 httpClient.BaseAddress = new Uri(url);
                 httpClient.DefaultRequestHeaders.Accept.Clear();
 
@@ -115,7 +143,7 @@ namespace Launcher.Lib
             return tokens;
         }
 
-        private static async Task<TokensClass> GetAccessTokenWithGoogletoken(string googleToken)
+        private static async Task<TokensClass> GetAccessTokenWithGoogleToken(string googleToken)
         {
             TokensClass tokens;
             using (var httpClient = new HttpClient())
@@ -143,7 +171,7 @@ namespace Launcher.Lib
         private static async Task<TokensClass> GetTokens(LoginSettings loginSettings)
         {
             if (string.IsNullOrEmpty(loginSettings.RefreshToken))
-                return await GetAccessTokenWithGoogletoken(loginSettings.GoogleToken);
+                return await GetAccessTokenWithGoogleToken(loginSettings.GoogleToken);
             return await GetAccessTokenWithRefreshToken(loginSettings.RefreshToken);
         }
 
@@ -161,7 +189,7 @@ namespace Launcher.Lib
 
         private static bool HasUserLoggedInBefore()
         {
-            return File.Exists(_loginSettingsFileLocation);
+            return File.Exists(_loginSettingsFileLocation + _loginSettingsFileName);
         }
 
         private static byte[] EncryptData(string plainText)
