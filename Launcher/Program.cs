@@ -2,6 +2,10 @@
 using Avalonia.Logging.Serilog;
 using Launcher.ViewModels;
 using Launcher.Views;
+#if Windows
+using Microsoft.Win32;
+
+#endif
 
 namespace Launcher
 {
@@ -12,6 +16,18 @@ namespace Launcher
         // yet and stuff might break.
         public static void Main(string[] args)
         {
+#if Windows
+            // write in registry for custom http protocol
+            using (var mainKey = Registry.CurrentUser.CreateSubKey(@"fubr"))
+            {
+                mainKey.SetValue("", "URL: fubr");
+                mainKey.SetValue("URL Protocol", "");
+                var shellKey = mainKey.CreateSubKey("shell");
+                var openKey = shellKey.CreateSubKey("command");
+                openKey.SetValue("",
+                    "D:\\Development\\Launcher\\LoginScript\\bin\\Release\\netcoreapp2.0\\win10-x64\\LoginScript.exe");
+            }
+#endif
             BuildAvaloniaApp().Start(AppMain, args);
         }
 
