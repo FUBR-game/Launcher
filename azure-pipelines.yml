@@ -15,3 +15,37 @@ variables:
 steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '**/*.csproj'
+    arguments: '--self-contained --runtime win10-x64 -c Release'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '**/*.csproj'
+    arguments: '--self-contained --runtime linux-x64 -c Release'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '**/*.csproj'
+    arguments: '--self-contained --runtime osx-x64 -c Release'
+    
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.BinariesDirectory)'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
+
+- task: CopyFilesOverSSH@0
+  inputs:
+    sshEndpoint: 'DeployConnection'
+    sourceFolder: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    contents: '**'
+    targetFolder: '/home/FUBR/Deployed'
+    failOnEmptySource: true
