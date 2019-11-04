@@ -45,7 +45,7 @@ steps:
 - task: CopyFilesOverSSH@0
   inputs:
     sshEndpoint: 'DeployConnection'
-    sourceFolder: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-    contents: '**'
+    sourceFolder: '$(Build.ArtifactStagingDirectory)'
+    contents: '$(Build.BuildId).zip'
     targetFolder: '/home/FUBR/Deployed'
     failOnEmptySource: true
