@@ -41,11 +41,8 @@ steps:
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     replaceExistingArchive: true
-
-- task: CopyFilesOverSSH@0
+- task: PublishBuildArtifacts@1
   inputs:
-    sshEndpoint: 'DeployConnection'
-    sourceFolder: '$(Build.ArtifactStagingDirectory)'
-    contents: '$(Build.BuildId).zip'
-    targetFolder: '/home/FUBR/Deployed'
-    failOnEmptySource: true
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
