@@ -22,7 +22,7 @@ namespace Launcher.Lib
         {
             User user;
             var resultJson = await CallApi("user");
-            user = User.UserFromJsonString(resultJson);
+            user = await User.UserFromJsonString(resultJson);
             return user;
         }
 
@@ -30,7 +30,7 @@ namespace Launcher.Lib
         {
             using (var httpClient = new HttpClient())
             {
-                const string url = @"https://lumen.arankieskamp.com/api";
+                const string url = @"https://lumen.arankieskamp.com/api/";
                 httpClient.BaseAddress = new Uri(url);
                 httpClient.DefaultRequestHeaders.Accept.Clear();
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

@@ -1,7 +1,50 @@
-﻿namespace Launcher.ViewModels
+﻿using System.Reactive.Disposables;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Launcher.Converters;
+using Launcher.Models;
+using ReactiveUI;
+
+namespace Launcher.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
     {
-        public string Greeting => "Hello World!";
+        public MainWindowViewModel()
+        {
+            Activator = new ViewModelActivator();
+            this.WhenActivated(disposables =>
+            {
+                /* handle activation */
+                Disposable
+                    .Create(() =>
+                    {
+                        /* handle deactivation */
+                    })
+                    .DisposeWith(disposables);
+            });
+            FriendsListViewModel = new FriendsListViewModel();
+        }
+
+        public static User CurrentUser => User.GetCurrentUser();
+
+        public FriendsListViewModel FriendsListViewModel { get; }
+
+        public string CurrentUsername
+        {
+            get => CurrentUser.Username;
+        }
+
+        public UserStatus CurrentUserStatus
+        {
+            get => CurrentUser.UserStatus;
+        }
+
+        public Bitmap CurrentUserImage
+        {
+            get => CurrentUser.Image;
+        }
+
+        public ISolidColorBrush StatusColour => UserStatusToColourConverter.ConvertColour(CurrentUser.UserStatus);
+        public ViewModelActivator Activator { get; }
     }
 }

@@ -76,7 +76,7 @@ namespace Launcher.Lib
                 OpenBrowser(@"https://lumen.arankieskamp.com");
 
                 var base64String = await WaitForLogin();
-                var user = User.UserFromBase64String(base64String);
+                var user = await User.UserFromBase64String(base64String);
                 loginSettings.GoogleToken = user.GetGoogleToken();
             }
 
@@ -187,7 +187,7 @@ namespace Launcher.Lib
             }
         }
 
-        private static bool HasUserLoggedInBefore()
+        public static bool HasUserLoggedInBefore()
         {
             return File.Exists(_loginSettingsFileLocation + _loginSettingsFileName);
         }

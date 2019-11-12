@@ -3,26 +3,40 @@
         xmlns:vm="clr-namespace:Launcher.ViewModels;assembly=Launcher"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:Launcher.Views"
+        xmlns:reactiveUi="clr-namespace:ReactiveUI;assembly=ReactiveUI"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" Width="800" Height="450"
         x:Class="Launcher.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
-        Title="FUBR Launcher">
+        Title="FUBR Launcher" CanResize="False" Name="TheMainWindow">
+    
 
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
+    
+    
 
-    <Grid>
-        <TabControl>
+    <DockPanel>
+        <TabControl DockPanel.Dock="Left" Width="600">
             <TabItem Header="Home">
-                <Grid Background="#FFFFFF" />
+                <Grid />
             </TabItem>
             <TabItem Header="Profile">
-                <Grid Background="#FFFFFF" />
+                <Grid />
             </TabItem>
             <TabItem Header="Setting">
-                <Grid Background="#FFFFFF" />
+                <Grid />
             </TabItem>
         </TabControl>
-    </Grid>
+        <Grid RowDefinitions="60,*" DockPanel.Dock="Right" >
+            <Grid Grid.Row="0" ColumnDefinitions="60,5,*" RowDefinitions="30,30">
+                <Image Grid.RowSpan="2" Width="50" Height="50" Source="{Binding CurrentUserImage}"/>
+                <TextBlock Grid.Row="0" Grid.Column="2" TextAlignment="Left" VerticalAlignment="Center" Margin="5 0 0 0" Text="{Binding CurrentUsername, Mode=OneWay}" />
+                <Grid Height="5" Grid.Row="1" Grid.Column="1" Background="{Binding StatusColour, Mode=OneWay}" />
+                <TextBlock Grid.Column="2" Grid.Row="1" TextAlignment="Left" VerticalAlignment="Center" Margin="5 0 0 0" Text="{Binding CurrentUserStatus, Mode=OneWay}" />
+            </Grid>
+            <views:FriendsList Grid.Row="1"  Width="200" DataContext="{Binding FriendsListViewModel}"/>
+        </Grid>
+    </DockPanel>
 </Window>

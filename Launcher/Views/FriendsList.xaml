@@ -1,0 +1,47 @@
+﻿<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:FriendsListViewModel" x:Class="Launcher.Views.FriendsList"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:Launcher.ViewModels"
+             xmlns:reactiveUi="http://reactiveui.net"
+             xmlns:converters="clr-namespace:Launcher.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="200">
+    
+    <Design.DataContext>
+        <viewModels:FriendsListViewModel />
+    </Design.DataContext>
+    
+    
+        <ScrollViewer Width="183" Height="320" VerticalAlignment="Top" HorizontalAlignment="Left" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled">
+            <Grid RowDefinitions="30,*,30,*,*">
+                <TextBlock  Grid.Row="0" Text="Online" />
+                <ListBox  Grid.Row="1" Items="{Binding OnlineFriends}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutoScrollToSelectedItem="False" BorderThickness="0">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="viewModels:FriendViewModel">
+                            <Grid ColumnDefinitions="60,5,Auto" RowDefinitions="30,30">
+                                <Image Grid.RowSpan="2" Width="50" Height="50" Source="{Binding Image}"/>
+                                <TextBlock Grid.Row="0" Grid.Column="2" TextAlignment="Left" VerticalAlignment="Center" Margin="5 7 0 0" Text="{Binding Username}" />
+                                <Grid Height="5" Grid.Row="1" Grid.Column="1" Background="{Binding StatusColour}" />
+                                <TextBlock Grid.Column="2" Grid.Row="1" TextAlignment="Left" VerticalAlignment="Center" Margin="5 7 0 0" Text="{Binding Status}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <TextBlock  Grid.Row="2" Text="Offline" />
+                <ListBox  Grid.Row="3" Items="{Binding OfflineFriends}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutoScrollToSelectedItem="False" BorderThickness="0">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="viewModels:FriendViewModel">
+                            <Grid ColumnDefinitions="60,5,Auto" RowDefinitions="30,30">
+                                <Image Grid.RowSpan="2" Width="50" Height="50" Source="{Binding Image}"/>
+                                <TextBlock Grid.Row="0" Grid.Column="2" TextAlignment="Left" VerticalAlignment="Center" Margin="5 7 0 0" Text="{Binding Username}" />
+                                <Grid Height="5" Grid.Row="1" Grid.Column="1" Background="{Binding StatusColour}" />
+                                <TextBlock Grid.Column="2" Grid.Row="1" TextAlignment="Left" VerticalAlignment="Center" Margin="5 7 0 0" Text="{Binding Status}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </ScrollViewer>
+</reactiveUi:ReactiveUserControl>

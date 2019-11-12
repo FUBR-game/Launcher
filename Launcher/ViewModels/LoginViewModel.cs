@@ -1,4 +1,7 @@
-﻿using Avalonia;
+﻿using System;
+using Avalonia;
+using Avalonia.Controls;
+using Launcher.Models;
 using Launcher.Views;
 using static Launcher.Lib.Authentication;
 
@@ -6,27 +9,38 @@ namespace Launcher.ViewModels
 {
     public class LoginViewModel : ViewModelBase
     {
-        public static async void OnClickLogin()
+        public async void OnClickLogin()
         {
-            await Login();
-            var mainWindow = new MainWindow
-            {
-                DataContext = new MainWindowViewModel()
-            };
-
-            mainWindow.Show();
-
-            foreach (var window in Application.Current.Windows)
-            {
-                if (window.Tag == null || !window.Tag.Equals("LOGIN_WINDOW")) continue;
-                window.Close();
-                break;
-            }
+            var LoggedInUser = await Login();
+            User.SetCurrentUser(LoggedInUser);
+            startMainwindow();
         }
 
-        public static async void OnClickRegister()
+        public async void OnClickRegister()
         {
-            await Login();
+            var LoggedInUser = await Login();
+            User.SetCurrentUser(LoggedInUser);
+            startMainwindow();
+        }
+
+        private void startMainwindow()
+        {
+            var MainWindowDataContext = new MainWindowViewModel();
+
+            var mainWindow = new MainWindow
+            {
+                DataContext = MainWindowDataContext
+            };
+
+            OnUserHasLoggedIn();
+            Application.Current.Run(mainWindow);
+        }
+
+        public event EventHandler UserHasLoggedIn;
+
+        protected virtual void OnUserHasLoggedIn()
+        {
+            UserHasLoggedIn?.Invoke(this, EventArgs.Empty);
         }
     }
 }

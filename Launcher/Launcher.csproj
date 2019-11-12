@@ -4,27 +4,37 @@
         <TargetFramework>netcoreapp2.1</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
-        <Folder Include="Models\"/>
+        <Folder Include="Models\" />
         <Compile Update="**\*.xaml.cs">
             <DependentUpon>%(Filename)</DependentUpon>
         </Compile>
         <AvaloniaResource Include="**\*.xaml">
             <SubType>Designer</SubType>
         </AvaloniaResource>
-        <AvaloniaResource Include="Assets\**"/>
+        <AvaloniaResource Include="Assets\**" />
+        <Compile Update="Views\FriendsList.xaml.cs">
+          <DependentUpon>FriendsList.xaml</DependentUpon>
+        </Compile>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="0.8.0"/>
-        <PackageReference Include="Avalonia.Desktop" Version="0.8.0"/>
-        <PackageReference Include="Avalonia.ReactiveUI" Version="0.8.0"/>
-        <PackageReference Include="DeviceId" Version="4.4.0"/>
-        <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0-preview1.19504.10"/>
-        <PackageReference Include="Newtonsoft.Json" Version="12.0.3-beta2"/>
+        <PackageReference Include="Avalonia" Version="0.9.0-preview5" />
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.9.0-preview5" />
+        <PackageReference Include="Avalonia.Desktop" Version="0.9.0-preview5" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.0-preview5" />
+        <PackageReference Include="DeviceId" Version="4.4.0" />
+        <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0-preview1.19504.10" />
+        <PackageReference Include="Newtonsoft.Json" Version="12.0.3-beta2" />
     </ItemGroup>
     <ItemGroup>
         <None Update="External\LoginPassThrough\**\*">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+    </ItemGroup>
+    <ItemGroup>
+        <AvaloniaResource Include="Assets\**\*" />
+      <None Update="Assets\**\*">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
     <PropertyGroup>
         <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows>

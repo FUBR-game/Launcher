@@ -1,9 +1,11 @@
-using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.ReactiveUI;
+using Launcher.ViewModels;
+using ReactiveUI;
 
 namespace Launcher.Views
 {
-    public class MainWindow : Window
+    public class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
         public MainWindow()
         {
@@ -12,6 +14,10 @@ namespace Launcher.Views
 
         private void InitializeComponent()
         {
+            this.WhenActivated(disposables =>
+            {
+                /* Handle view activation etc. */
+            });
             AvaloniaXamlLoader.Load(this);
         }
     }
