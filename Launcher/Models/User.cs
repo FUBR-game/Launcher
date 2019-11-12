@@ -18,11 +18,22 @@ namespace Launcher.Models
 
     public class User
     {
+        private static User currentUser = new User
+        {
+            Game_Currency = 0,
+            PremiumCurrency = 0,
+            googleToken = "104372892978312113975",
+            UserId = 1,
+            Username = "Aranna",
+        };
+        
         public int Game_Currency;
         private string googleToken;
         public int PremiumCurrency;
         public int UserId;
         public string Username;
+        public UserStatus UserStatus = UserStatus.Online;
+        public string Image = "avares://Launcher/Assets/50x50image.png";
 
         private User()
         {
@@ -61,6 +72,16 @@ namespace Launcher.Models
         {
             var jsonUser = JsonConvert.DeserializeObject<JsonUser>(jsonString);
             return jsonUser.google_token;
+        }
+
+        public static void setCurrentUser(User user)
+        {
+            currentUser = user;
+        }
+
+        public static User GetCurrentUser()
+        {
+            return currentUser;
         }
     }
 }

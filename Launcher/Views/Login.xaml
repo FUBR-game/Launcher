@@ -18,10 +18,10 @@
             <TextBlock HorizontalAlignment="Center" Text="FUBR" TextWrapping="Wrap" VerticalAlignment="Top"
                        FontSize="40" FontWeight="Bold" />
             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Spacing="12">
-                <Button Content="Login" Command="{Binding OnClickLogin}" HorizontalAlignment="Center"
-                        VerticalAlignment="Top" />
-                <Button Content="Register" Command="{Binding OnClickRegister}" HorizontalAlignment="Center"
-                        VerticalAlignment="Top" />
+                <!-- <Button Content="Login" Command="{Binding OnClickLogin}" HorizontalAlignment="Center" -->
+                <!--         VerticalAlignment="Top" /> -->
+                <!-- <Button Content="Register" Command="{Binding OnClickRegister}" HorizontalAlignment="Center" -->
+                <!--         VerticalAlignment="Top" /> -->
             </StackPanel>
         </StackPanel>
     </Grid>

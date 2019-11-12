@@ -1,21 +1,21 @@
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+﻿using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using Launcher.ViewModels;
-using ReactiveUI;
 
 namespace Launcher.Views
 {
-    public class MainWindow : ReactiveWindow<MainWindowViewModel>
+    /// <summary>
+    /// Interaction logic for FriendsList.xaml
+    /// </summary>
+    public partial class FriendsList : ReactiveUserControl<FriendsListViewModel>
     {
-        public MainWindow()
+        public FriendsList()
         {
             InitializeComponent();
         }
 
         private void InitializeComponent()
         {
-            this.WhenActivated(disposables => { /* Handle view activation etc. */ });
             AvaloniaXamlLoader.Load(this);
         }
     }

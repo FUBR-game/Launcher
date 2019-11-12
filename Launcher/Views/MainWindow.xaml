@@ -3,26 +3,28 @@
         xmlns:vm="clr-namespace:Launcher.ViewModels;assembly=Launcher"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:Launcher.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" Width="800" Height="450"
         x:Class="Launcher.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
-        Title="FUBR Launcher">
+        Title="FUBR Launcher" CanResize="False">
 
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <Grid>
-        <TabControl>
+    <DockPanel>
+        <TabControl DockPanel.Dock="Left" Width="600">
             <TabItem Header="Home">
-                <Grid Background="#FFFFFF" />
+                <Grid />
             </TabItem>
             <TabItem Header="Profile">
-                <Grid Background="#FFFFFF" />
+                <Grid />
             </TabItem>
             <TabItem Header="Setting">
-                <Grid Background="#FFFFFF" />
+                <Grid />
             </TabItem>
         </TabControl>
-    </Grid>
+        <views:FriendsList DockPanel.Dock="Right" Width="200" DataContext="{Binding FriendsListViewModel}"/>
+    </DockPanel>
 </Window>

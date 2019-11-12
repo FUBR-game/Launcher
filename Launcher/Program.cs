@@ -1,5 +1,8 @@
-﻿using Avalonia;
+﻿using System;
+using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Logging.Serilog;
+using Avalonia.ReactiveUI;
 using Launcher.ViewModels;
 using Launcher.Views;
 #if Windows
@@ -24,8 +27,8 @@ namespace Launcher
                 mainKey.SetValue("URL Protocol", "");
                 var shellKey = mainKey.CreateSubKey("shell");
                 var openKey = shellKey.CreateSubKey("command");
-                openKey.SetValue("",
-                    "D:\\Development\\Launcher\\LoginScript\\bin\\Release\\netcoreapp2.0\\win10-x64\\LoginScript.exe");
+                openKey.SetValue("", AppDomain.CurrentDomain.BaseDirectory + 
+                    "External\\LoginPassTrough\\win10-x64\\LoginScript.exe");
             }
 #endif
             BuildAvaloniaApp().Start(AppMain, args);
@@ -44,10 +47,15 @@ namespace Launcher
         // container, etc.
         private static void AppMain(Application app, string[] args)
         {
-            var window = new Login
+            var window = new MainWindow
             {
-                DataContext = new LoginViewModel()
+                DataContext = new MainWindowViewModel()
             };
+            
+//            var window = new Login
+//            {
+//                DataContext = new LoginViewModel()
+//            };
 
             app.Run(window);
         }

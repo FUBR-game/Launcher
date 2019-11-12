@@ -187,7 +187,7 @@ namespace Launcher.Lib
             }
         }
 
-        private static bool HasUserLoggedInBefore()
+        public static bool HasUserLoggedInBefore()
         {
             return File.Exists(_loginSettingsFileLocation + _loginSettingsFileName);
         }
