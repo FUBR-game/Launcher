@@ -16,9 +16,8 @@
     </Design.DataContext>
     
     
-
-    <DockPanel>
-        <TabControl DockPanel.Dock="Left" Width="600">
+    <Grid ColumnDefinitions="600,200" RowDefinitions="400,50">
+        <TabControl Width="600" Height="400">
             <TabItem Header="Home">
                 <Grid />
             </TabItem>
@@ -29,7 +28,7 @@
                 <Grid />
             </TabItem>
         </TabControl>
-        <Grid RowDefinitions="60,*" DockPanel.Dock="Right" >
+        <Grid Grid.Column="1" RowDefinitions="60,*" DockPanel.Dock="Left">
             <Grid Grid.Row="0" ColumnDefinitions="60,5,*" RowDefinitions="30,30">
                 <Image Grid.RowSpan="2" Width="50" Height="50" Source="{Binding CurrentUserImage}"/>
                 <TextBlock Grid.Row="0" Grid.Column="2" TextAlignment="Left" VerticalAlignment="Center" Margin="5 0 0 0" Text="{Binding CurrentUsername, Mode=OneWay}" />
@@ -38,5 +37,9 @@
             </Grid>
             <views:FriendsList Grid.Row="1"  Width="200" DataContext="{Binding FriendsListViewModel}"/>
         </Grid>
-    </DockPanel>
+        <Grid Row="1" ColumnSpan="2" DockPanel.Dock="Bottom"  Height="40" Width="800" ColumnDefinitions="150,650">
+            <Button Grid.Column="0" IsEnabled="{Binding CanPLay}" Width="150" Height="40" HorizontalAlignment="Left">Start Game</Button>
+            <ProgressBar Grid.Column="1" IsVisible="{Binding NeedUpdating}" Width="650" HorizontalAlignment="Right" Minimum="0" Maximum="100" Value="50"/>
+        </Grid>
+    </Grid>
 </Window>

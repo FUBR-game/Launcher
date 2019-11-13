@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
+        <OutputType>WinExe</OutputType>
         <TargetFramework>netcoreapp2.1</TargetFramework>
+        <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
     </PropertyGroup>
     <ItemGroup>
         <Folder Include="Models\" />
@@ -24,6 +25,7 @@
         <PackageReference Include="DeviceId" Version="4.4.0" />
         <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0-preview1.19504.10" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.3-beta2" />
+        <PackageReference Include="NSubsys" Version="1.0.0"/>
     </ItemGroup>
     <ItemGroup>
         <None Update="External\LoginPassThrough\**\*">

@@ -1,5 +1,4 @@
 using System.Buffers.Text;
-using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using Launcher.Lib;
 using Newtonsoft.Json;
@@ -45,7 +44,7 @@ namespace Launcher.Models
             return _googleToken;
         }
 
-        public static async Task<User> UserFromJsonString(string jsonString)
+        public static User UserFromJsonString(string jsonString)
         {
             var jsonUser = JsonConvert.DeserializeObject<JsonUser>(jsonString);
 
@@ -70,14 +69,14 @@ namespace Launcher.Models
         }
 
 
-        public static async Task<User> UserFromBase64String(string base64String)
+        public static User UserFromBase64String(string base64String)
         {
             var encodedBytes = UTF8.GetBytes(base64String);
             var userJsonBytes = new byte[encodedBytes.Length];
             Base64.DecodeFromUtf8(encodedBytes, userJsonBytes, out var bytesConsumed, out var bytesWritten);
 
             var userJsonString = UTF8.GetString(userJsonBytes);
-            return await UserFromJsonString(userJsonString);
+            return UserFromJsonString(userJsonString);
         }
 
         public static string GetGoogleTokenFromJsonString(string jsonString)

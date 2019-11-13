@@ -9,6 +9,8 @@ namespace Launcher.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
     {
+        private bool _needsUpdate = false;
+
         public MainWindowViewModel()
         {
             Activator = new ViewModelActivator();
@@ -45,6 +47,17 @@ namespace Launcher.ViewModels
         }
 
         public ISolidColorBrush StatusColour => UserStatusToColourConverter.ConvertColour(CurrentUser.UserStatus);
+
+        public bool NeedUpdating
+        {
+            get => _needsUpdate;
+        }
+
+        public bool CanPLay
+        {
+            get => !_needsUpdate;
+        }
+
         public ViewModelActivator Activator { get; }
     }
 }

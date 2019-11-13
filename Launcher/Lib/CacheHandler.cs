@@ -52,7 +52,7 @@ namespace Launcher.Lib
             return ImageStringToBitMap(imageUrl, null);
         }
 
-        private Bitmap ImageStringToBitMap(string imageUrl, string location = null)
+        private Bitmap ImageStringToBitMap(string imageUrl, string location)
         {
             if (location == null)
             {
