@@ -22,7 +22,7 @@ namespace Launcher.Lib
         {
             User user;
             var resultJson = await CallApi("user");
-            user = await User.UserFromJsonString(resultJson);
+            user = User.UserFromJsonString(resultJson);
             return user;
         }
 

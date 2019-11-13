@@ -21,10 +21,12 @@ namespace Launcher.Lib
 
     internal class TokensClass
     {
+#pragma warning disable 649
         public string access_token;
         public string expires_in;
         public string refresh_token;
         public string token_type;
+#pragma warning restore 649
     }
 
     public static class Authentication
@@ -66,17 +68,25 @@ namespace Launcher.Lib
 
                 var decryptedLoginSettings = DecryptData(StreamToByteArray(encryptedFileStream));
                 encryptedFileStream.Close();
-                loginSettings = JsonConvert.DeserializeObject<LoginSettings>(decryptedLoginSettings);
+                try
+                {
+                    loginSettings = JsonConvert.DeserializeObject<LoginSettings>(decryptedLoginSettings);
+                }
+                catch (JsonReaderException)
+                {
+                    // File got corrupted, removing file and sending to browser
+                    File.Delete(_loginSettingsFileLocation + _loginSettingsFileName);
+                }
             }
 
-            if (loginSettings.GoogleToken == null)
+            if (loginSettings.GoogleToken == null || loginSettings.RefreshToken == null)
             {
                 // open brower to authenticate
                 loginSettings = new LoginSettings();
                 OpenBrowser(@"https://lumen.arankieskamp.com");
 
                 var base64String = await WaitForLogin();
-                var user = await User.UserFromBase64String(base64String);
+                var user = User.UserFromBase64String(base64String);
                 loginSettings.GoogleToken = user.GetGoogleToken();
             }
 
