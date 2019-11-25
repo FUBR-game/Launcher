@@ -2,6 +2,7 @@
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Launcher.Converters;
+using Launcher.Lib;
 using Launcher.Models;
 using ReactiveUI;
 
@@ -9,6 +10,7 @@ namespace Launcher.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
     {
+        private ApiAccessor _apiAccessor = ApiAccessor.GetApiAccessor;
         private bool _needsUpdate = false;
 
         public MainWindowViewModel()
@@ -25,6 +27,7 @@ namespace Launcher.ViewModels
                     .DisposeWith(disposables);
             });
             FriendsListViewModel = new FriendsListViewModel();
+            GetFriendsList();
         }
 
         public static User CurrentUser => User.GetCurrentUser();
@@ -59,5 +62,10 @@ namespace Launcher.ViewModels
         }
 
         public ViewModelActivator Activator { get; }
+
+        private async void GetFriendsList()
+        {
+            FriendsListViewModel.LoadFriends(await _apiAccessor.GetFriends());
+        }
     }
 }

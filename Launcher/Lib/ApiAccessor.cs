@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -41,6 +42,14 @@ namespace Launcher.Lib
                 var resultJson = await result.Content.ReadAsStringAsync();
                 return resultJson;
             }
+        }
+
+        public async Task<List<User>> GetFriends()
+        {
+            var friendsListJson = await CallApi("users/friends");
+            var friends = User.UsersFromJsonString(friendsListJson);
+
+            return friends;
         }
     }
 }

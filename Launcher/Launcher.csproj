@@ -3,6 +3,7 @@
         <OutputType>WinExe</OutputType>
         <TargetFramework>netcoreapp2.1</TargetFramework>
         <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
+        <LangVersion>latest</LangVersion>
     </PropertyGroup>
     <ItemGroup>
         <Folder Include="Models\" />

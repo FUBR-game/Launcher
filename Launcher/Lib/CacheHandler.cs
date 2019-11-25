@@ -22,7 +22,7 @@ namespace Launcher.Lib
 
         public Bitmap GetUserIcon(User user)
         {
-            var emailHash = CreateMD5(user.email);
+            var emailHash = CreateMD5(user.Email);
             var gravatarLink = "https://www.gravatar.com/avatar/" + emailHash + "?s=50";
 
             return ImageStringToBitMap(gravatarLink, UserIconLocation);

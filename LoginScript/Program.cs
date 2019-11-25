@@ -9,11 +9,16 @@ namespace LoginScript
     {
         private static void Main(string[] args)
         {
+            Console.WriteLine("Finding Processes");
             var launcherProcessId = 0;
-            var launcherProcesses = Process.GetProcessesByName("Launcher");
+            var launcherProcesses = Process.GetProcessesByName("dotnet");
+            Console.WriteLine("Found " + launcherProcesses.Length + " Processes");
             foreach (var launcherProcess in launcherProcesses)
+            {
+                Console.WriteLine("Found process with title " + launcherProcess.MainWindowTitle);
                 if (launcherProcess.MainWindowTitle == "FUBR Login")
                     launcherProcessId = launcherProcess.Id;
+            }
 
             if (args.Length == 0 || launcherProcessId == 0)
             {

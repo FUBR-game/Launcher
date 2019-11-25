@@ -8,16 +8,29 @@ namespace Launcher.ViewModels
 {
     public class FriendViewModel : ViewModelBase
     {
-        private string _username = "";
-        private UserStatus _status = UserStatus.Offline;
         private Bitmap _image;
+        private UserStatus _status = UserStatus.Offline;
+        private string _username = "";
+        public int UserId;
 
-        public FriendViewModel(string username, UserStatus userStatus, string imageName = "DefaultUserIcon.png")
+
+        public FriendViewModel(string username, UserStatus userStatus, int userId,
+            string imageName = "DefaultUserIcon.png")
         {
             _image = new Bitmap("Assets/50x50/" + imageName);
             _username = username;
             _status = userStatus;
+            UserId = userId;
         }
+
+        public FriendViewModel(User user)
+        {
+            UserId = user.UserId;
+            _image = user.Image;
+            _status = user.UserStatus;
+            _username = user.Username;
+        }
+
         public string Username
         {
             get => _username;
@@ -26,8 +39,12 @@ namespace Launcher.ViewModels
 
         public UserStatus Status
         {
-            get => _status;
-            set => this.RaiseAndSetIfChanged(ref _status, value);
+            get => _status == UserStatus.Invisible ? UserStatus.Offline : _status;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _status, value);
+                this.RaisePropertyChanged(nameof(StatusColour));
+            }
         }
 
         public Bitmap Image

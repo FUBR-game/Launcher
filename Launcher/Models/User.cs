@@ -1,4 +1,5 @@
 using System.Buffers.Text;
+using System.Collections.Generic;
 using Avalonia.Media.Imaging;
 using Launcher.Lib;
 using Newtonsoft.Json;
@@ -6,33 +7,16 @@ using static System.Text.Encoding;
 
 namespace Launcher.Models
 {
-    internal class JsonUser
-    {
-#pragma warning disable 649
-        public string created_at;
-        public int game_currency;
-        public string google_token;
-        public int id;
-        public string last_online;
-        public int premium_currency;
-        public string updated_at;
-        public string username;
-        public string gravatar_icon;
-        public string email;
-#pragma warning restore 649
-    }
-
     public class User
     {
         private static User _currentUser = new User();
-        private string _googleToken;
-        public string email;
-
-        public int GameCurrency;
+        [JsonProperty("google_token")] private string _googleToken;
+        [JsonProperty("email")] public string Email;
+        [JsonProperty("game_currency")] public int GameCurrency;
         public Bitmap Image;
-        public int PremiumCurrency;
-        public int UserId;
-        public string Username;
+        [JsonProperty("premium_currency")] public int PremiumCurrency;
+        [JsonProperty("id")] public int UserId;
+        [JsonProperty("username")] public string Username;
         public UserStatus UserStatus = UserStatus.Online;
 
         private User()
@@ -46,20 +30,22 @@ namespace Launcher.Models
 
         public static User UserFromJsonString(string jsonString)
         {
-            var jsonUser = JsonConvert.DeserializeObject<JsonUser>(jsonString);
+            var user = JsonConvert.DeserializeObject<User>(jsonString);
 
-            var user = new User
-            {
-                Username = jsonUser.username,
-                UserId = jsonUser.id,
-                GameCurrency = jsonUser.game_currency,
-                PremiumCurrency = jsonUser.premium_currency,
-                _googleToken = jsonUser.google_token,
-                email = jsonUser.email
-            };
             user.LoadImage();
 
             return user;
+        }
+
+        public static List<User> UsersFromJsonString(string jsonString)
+        {
+            var users = JsonConvert.DeserializeObject<List<User>>(jsonString);
+            foreach (var user in users)
+            {
+                user.LoadImage();
+            }
+
+            return users;
         }
 
         private void LoadImage()
@@ -77,12 +63,6 @@ namespace Launcher.Models
 
             var userJsonString = UTF8.GetString(userJsonBytes);
             return UserFromJsonString(userJsonString);
-        }
-
-        public static string GetGoogleTokenFromJsonString(string jsonString)
-        {
-            var jsonUser = JsonConvert.DeserializeObject<JsonUser>(jsonString);
-            return jsonUser.google_token;
         }
 
         public static void SetCurrentUser(User user)
